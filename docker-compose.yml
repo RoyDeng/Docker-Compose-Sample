@@ -1,0 +1,52 @@
+version: "2"
+
+services:
+
+  nodejs:
+    restart: always
+    build: ./nodejs
+    hostname: nodejs
+    environment:
+      - TZ=Asia/Taipei
+    container_name: nodejs
+    command: bash -c 'node app.js'
+    networks:
+      - sample
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+
+  redis:
+    restart: always
+    image: redis:latest
+    hostname: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+    logging:
+        driver: "json-file"
+        options:
+          max-size: "50m"
+    networks:
+      - sample
+
+  nginx:
+    restart: always
+    image: nginx
+    container_name: nginx
+    environment:
+      - TZ=Asia/Taipei
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+    networks:
+      - sample
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+
+networks:
+  sample:
